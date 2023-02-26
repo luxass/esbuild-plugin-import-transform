@@ -1,0 +1,60 @@
+{
+  "name": "esbuild-plugin-import-transform",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "A esbuild plugin, that allows transforming imports",
+  "author": {
+    "name": "Lucas Norgaard",
+    "email": "lucasnrgaard@gmail.com",
+    "url": "https://luxass.dev"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/luxass/esbuild-transform-imports",
+  "repository": "https://github.com/luxass/esbuild-transform-imports",
+  "bugs": {
+    "url": "https://github.com/luxass/esbuild-transform-imports/issues"
+  },
+  "keywords": [
+    "esbuild",
+    "plugin",
+    "transform",
+    "import"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "packageManager": "pnpm@7.18.0",
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "lint": "eslint . --config=.eslintrc",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "esbuild": "0.16.17"
+  },
+  "devDependencies": {
+    "@luxass/eslint-config": "^3.0.0",
+    "@luxass/prettier-config": "^1.1.9",
+    "esbuild": "0.16.17",
+    "eslint": "^8.35.0",
+    "prettier": "^2.8.4",
+    "tsup": "^6.6.3",
+    "typescript": "^4.9.5",
+    "vitest": "^0.29.1"
+  }
+}
