@@ -1,7 +1,7 @@
 {
   "name": "esbuild-plugin-import-transform",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A esbuild plugin, that allows transforming imports",
   "author": {
     "name": "Lucas Norgaard",
@@ -9,10 +9,10 @@
     "url": "https://luxass.dev"
   },
   "license": "MIT",
-  "homepage": "https://github.com/luxass/esbuild-transform-imports",
-  "repository": "https://github.com/luxass/esbuild-transform-imports",
+  "homepage": "https://github.com/luxass/esbuild-import-transform",
+  "repository": "https://github.com/luxass/esbuild-import-transform",
   "bugs": {
-    "url": "https://github.com/luxass/esbuild-transform-imports/issues"
+    "url": "https://github.com/luxass/esbuild-import-transform/issues"
   },
   "keywords": [
     "esbuild",
