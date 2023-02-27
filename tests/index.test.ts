@@ -91,3 +91,35 @@ console.log((0, import_node_path.join)("a", "b"));
 })();
 `);
 });
+
+test("transform `./locate` to code", async () => {
+  const result = await build({
+    entryPoints: ["./tests/fixtures/file.ts"],
+    format: "esm",
+    bundle: true,
+    write: false,
+    plugins: [
+      ImportTransformPlugin({
+        "node:path": {
+          text: `export function join(...args) {
+            return args.join("/");
+          }`
+        }
+      })
+    ],
+    outfile: "./tests/fixtures/out/file.js"
+  });
+  expect({
+    errors: result.errors,
+    warnings: result.warnings
+  }).toEqual({ errors: [], warnings: [] });
+  expect(result.outputFiles[0].text)
+    .toBe(`// import-transform:node:path
+function join(...args) {
+  return args.join("/");
+}
+
+// tests/fixtures/file.ts
+console.log(join("a", "b"));
+`);
+});

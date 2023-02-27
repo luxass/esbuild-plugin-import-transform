@@ -1,11 +1,30 @@
 import type { Platform, Plugin, PluginBuild } from "esbuild";
 
-export interface ImportTransform {
+export interface TextTransform {
   platform?: Platform
-  to: string
+  text: string
+  to?: never
 }
 
-function transformer(build: PluginBuild, from: string, to: string) {
+export interface ToTransform {
+  platform?: Platform
+  to: string
+  text?: never
+}
+
+export type ImportTransform = TextTransform | ToTransform;
+
+function transformer({
+  build,
+  from,
+  to,
+  text
+}: {
+  build: PluginBuild
+  from: string
+  to?: string
+  text?: string
+}) {
   const filter = new RegExp(`^${from}$`);
 
   build.onResolve({ filter }, (args) => {
@@ -22,13 +41,15 @@ function transformer(build: PluginBuild, from: string, to: string) {
   });
 
   build.onLoad({ filter, namespace: "import-transform" }, (args) => {
-    const importerCode = `
-    export * from '${args.path.replace(args.pluginData.name, to)}';
-    export { default } from '${args.path.replace(args.pluginData.name, to)}';
+    const code =
+      text ||
+      `
+    export * from '${args.path.replace(args.pluginData.name, to!)}';
+    export { default } from '${args.path.replace(args.pluginData.name, to!)}';
   `;
 
     return {
-      contents: importerCode,
+      contents: code,
       resolveDir: args.pluginData.resolveDir
     };
   });
@@ -41,12 +62,26 @@ const ImportTransformPlugin = (
   setup(build) {
     for (const [mod, transform] of Object.entries(modules || {})) {
       if (typeof transform === "object") {
-        const { platform, to } = transform;
-        if (build.initialOptions.platform !== platform) return;
+        const { platform, text, to } = transform;
+        if (platform && build.initialOptions.platform !== platform) return;
 
-        transformer(build, mod, to);
+        if (!text && !to) {
+          throw new Error(
+            "ImportTransformPlugin: Either `text` or `to` is required"
+          );
+        }
+
+        transformer({
+          build,
+          from: mod,
+          ...(text ? { text } : { to })
+        });
       } else if (typeof transform === "string") {
-        transformer(build, mod, transform);
+        transformer({
+          build,
+          from: mod,
+          to: transform
+        });
       }
     }
   }
