@@ -1,8 +1,37 @@
-import type { Platform, Plugin } from "esbuild";
+import type { Platform, Plugin, PluginBuild } from "esbuild";
 
 export interface ImportTransform {
-  platform: Platform
+  platform?: Platform
   to: string
+}
+
+function transformer(build: PluginBuild, from: string, to: string) {
+  const filter = new RegExp(`^${from}$`);
+
+  build.onResolve({ filter }, (args) => {
+    if (args.resolveDir === "") return;
+
+    return {
+      path: args.path,
+      namespace: "import-transform",
+      pluginData: {
+        resolveDir: args.resolveDir,
+        name: from
+      }
+    };
+  });
+
+  build.onLoad({ filter, namespace: "import-transform" }, (args) => {
+    const importerCode = `
+    export * from '${args.path.replace(args.pluginData.name, to)}';
+    export { default } from '${args.path.replace(args.pluginData.name, to)}';
+  `;
+
+    return {
+      contents: importerCode,
+      resolveDir: args.pluginData.resolveDir
+    };
+  });
 }
 
 const ImportTransformPlugin = (
@@ -10,66 +39,14 @@ const ImportTransformPlugin = (
 ): Plugin => ({
   name: "import-transform",
   setup(build) {
-    for (const [from, transform] of Object.entries(modules || {})) {
-      const filter = new RegExp(`^${from}$`);
+    for (const [mod, transform] of Object.entries(modules || {})) {
       if (typeof transform === "object") {
         const { platform, to } = transform;
-        build.onResolve({ filter }, (args) => {
-          if (args.resolveDir === "") return;
+        if (build.initialOptions.platform !== platform) return;
 
-          if (build.initialOptions.platform !== platform) return;
-          return {
-            path: args.path,
-            namespace: "import-transform",
-            pluginData: {
-              resolveDir: args.resolveDir,
-              name: from
-            }
-          };
-        });
-
-        build.onLoad({ filter, namespace: "import-transform" }, (args) => {
-          const importerCode = `
-          export * from '${args.path.replace(args.pluginData.name, to)}';
-          export { default } from '${args.path.replace(
-            args.pluginData.name,
-            to
-          )}';
-        `;
-
-          return {
-            contents: importerCode,
-            resolveDir: args.pluginData.resolveDir
-          };
-        });
+        transformer(build, mod, to);
       } else if (typeof transform === "string") {
-        build.onResolve({ filter }, (args) => {
-          if (args.resolveDir === "") return;
-
-          return {
-            path: args.path,
-            namespace: "import-transform",
-            pluginData: {
-              resolveDir: args.resolveDir,
-              name: from
-            }
-          };
-        });
-
-        build.onLoad({ filter, namespace: "import-transform" }, (args) => {
-          const importerCode = `
-          export * from '${args.path.replace(args.pluginData.name, transform)}';
-          export { default } from '${args.path.replace(
-            args.pluginData.name,
-            transform
-          )}';
-        `;
-
-          return {
-            contents: importerCode,
-            resolveDir: args.pluginData.resolveDir
-          };
-        });
+        transformer(build, mod, transform);
       }
     }
   }
