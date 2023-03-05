@@ -1,4 +1,4 @@
-<h1 align="center">IMport Transform Plugin</h1>
+<h1 align="center">Import Transform Plugin</h1>
 
 This plugin allows you to transform imports with ESBUILD
 <br/>
@@ -31,6 +31,10 @@ await build({
       "node:path": {
         platform: "browser",
         to: "path-browserify"
+      },
+
+      "./locate": {
+        text: "export function locate() { return \"found\" }"
       }
     })
   ]
