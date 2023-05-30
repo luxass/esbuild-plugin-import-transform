@@ -2,6 +2,7 @@
   "name": "esbuild-plugin-import-transform",
   "type": "module",
   "version": "0.2.0",
+  "packageManager": "pnpm@8.6.0",
   "description": "A esbuild plugin, that allows transforming imports",
   "author": {
     "name": "Lucas Norgaard",
@@ -36,11 +37,11 @@
   "engines": {
     "node": ">=16"
   },
-  "packageManager": "pnpm@8.6.0",
   "scripts": {
-    "dev": "tsup --watch",
+    "dev": "vitest",
     "build": "tsup",
-    "lint": "eslint . --config=.eslintrc",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
@@ -48,13 +49,11 @@
     "esbuild": ">=0.16.17"
   },
   "devDependencies": {
-    "@luxass/eslint-config": "^3.0.0",
-    "@luxass/prettier-config": "^1.1.9",
-    "esbuild": "^0.17.10",
-    "eslint": "^8.35.0",
-    "prettier": "^2.8.4",
-    "tsup": "^6.6.3",
-    "typescript": "^5.0.0",
-    "vitest": "^0.31.0"
+    "@luxass/eslint-config": "^3.2.0",
+    "esbuild": "^0.17.19",
+    "eslint": "^8.41.0",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.4",
+    "vitest": "^0.31.2"
   }
 }

@@ -1,16 +1,16 @@
 import type { Platform, Plugin, PluginBuild } from "esbuild";
 
-export interface TextTransform {
+export type TextTransform = {
   platform?: Platform
   text: string
   to?: never
-}
+};
 
-export interface ToTransform {
+export type ToTransform = {
   platform?: Platform
   to: string
   text?: never
-}
+};
 
 export type ImportTransform = TextTransform | ToTransform;
 
@@ -55,36 +55,36 @@ function transformer({
   });
 }
 
-const ImportTransformPlugin = (
-  modules?: Record<string, string | ImportTransform>
-): Plugin => ({
-  name: "import-transform",
-  setup(build) {
-    for (const [mod, transform] of Object.entries(modules || {})) {
-      if (typeof transform === "object") {
-        const { platform, text, to } = transform;
-        if (platform && build.initialOptions.platform !== platform) return;
+function ImportTransformPlugin(modules?: Record<string, string | ImportTransform>): Plugin {
+  return {
+    name: "import-transform",
+    setup(build) {
+      for (const [mod, transform] of Object.entries(modules || {})) {
+        if (typeof transform === "object") {
+          const { platform, text, to } = transform;
+          if (platform && build.initialOptions.platform !== platform) return;
 
-        if (!text && !to) {
-          throw new Error(
-            "ImportTransformPlugin: Either `text` or `to` is required"
-          );
+          if (!text && !to) {
+            throw new Error(
+              "ImportTransformPlugin: Either `text` or `to` is required"
+            );
+          }
+
+          transformer({
+            build,
+            from: mod,
+            ...(text ? { text } : { to })
+          });
+        } else if (typeof transform === "string") {
+          transformer({
+            build,
+            from: mod,
+            to: transform
+          });
         }
-
-        transformer({
-          build,
-          from: mod,
-          ...(text ? { text } : { to })
-        });
-      } else if (typeof transform === "string") {
-        transformer({
-          build,
-          from: mod,
-          to: transform
-        });
       }
     }
-  }
-});
+  };
+}
 
 export default ImportTransformPlugin;
