@@ -2,7 +2,7 @@
   "name": "esbuild-plugin-import-transform",
   "type": "module",
   "version": "0.2.1",
-  "packageManager": "pnpm@8.6.0",
+  "packageManager": "pnpm@8.6.3",
   "description": "A esbuild plugin, that allows transforming imports",
   "author": {
     "name": "Lucas Norgaard",
@@ -50,10 +50,10 @@
   },
   "devDependencies": {
     "@luxass/eslint-config": "^3.2.0",
-    "esbuild": "^0.17.19",
+    "esbuild": "^0.18.0",
     "eslint": "^8.41.0",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4",
-    "vitest": "^0.31.2"
+    "vitest": "^0.32.0"
   }
 }
