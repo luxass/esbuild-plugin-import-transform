@@ -2,7 +2,7 @@
   "name": "esbuild-plugin-import-transform",
   "type": "module",
   "version": "0.2.1",
-  "packageManager": "pnpm@8.6.9",
+  "packageManager": "pnpm@8.6.11",
   "description": "A esbuild plugin, that allows transforming imports",
   "author": {
     "name": "Lucas Norgaard",
