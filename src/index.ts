@@ -1,16 +1,16 @@
 import type { Platform, Plugin, PluginBuild } from "esbuild";
 
-export type TextTransform = {
+export interface TextTransform {
   platform?: Platform
   text: string
   to?: never
-};
+}
 
-export type ToTransform = {
+export interface ToTransform {
   platform?: Platform
   to: string
   text?: never
-};
+}
 
 export type ImportTransform = TextTransform | ToTransform;
 
@@ -18,7 +18,7 @@ function transformer({
   build,
   from,
   to,
-  text
+  text,
 }: {
   build: PluginBuild
   from: string
@@ -35,22 +35,22 @@ function transformer({
       namespace: "import-transform",
       pluginData: {
         resolveDir: args.resolveDir,
-        name: from
-      }
+        name: from,
+      },
     };
   });
 
   build.onLoad({ filter, namespace: "import-transform" }, (args) => {
-    const code =
-      text ||
-      `
+    const code
+      = text
+      || `
     export * from '${args.path.replace(args.pluginData.name, to!)}';
     export { default } from '${args.path.replace(args.pluginData.name, to!)}';
   `;
 
     return {
       contents: code,
-      resolveDir: args.pluginData.resolveDir
+      resolveDir: args.pluginData.resolveDir,
     };
   });
 }
@@ -66,24 +66,24 @@ function ImportTransformPlugin(modules?: Record<string, string | ImportTransform
 
           if (!text && !to) {
             throw new Error(
-              "ImportTransformPlugin: Either `text` or `to` is required"
+              "ImportTransformPlugin: Either `text` or `to` is required",
             );
           }
 
           transformer({
             build,
             from: mod,
-            ...(text ? { text } : { to })
+            ...(text ? { text } : { to }),
           });
         } else if (typeof transform === "string") {
           transformer({
             build,
             from: mod,
-            to: transform
+            to: transform,
           });
         }
       }
-    }
+    },
   };
 }
 
