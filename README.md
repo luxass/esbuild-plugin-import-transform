@@ -1,13 +1,12 @@
-<h1 align="center">Import Transform Plugin</h1>
+# esbuild-plugin-import-transform
 
-This plugin allows you to transform imports with ESBUILD
-<br/>
-<br/>
+[![npm version][npm-version-src]][npm-version-href]
+[![npm downloads][npm-downloads-src]][npm-downloads-href]
 
 ## 📦 Installation
 
 ```sh
-pnpm install -D esbuild esbuild-plugin-import-transform
+npm install -D esbuild esbuild-plugin-import-transform
 ```
 
 ## 📚 Usage
@@ -35,8 +34,22 @@ await build({
 
       "./locate": {
         text: "export function locate() { return \"found\" }"
-      }
+      },
+
+      // will transform all imports from "./utils" to "./lib/utils2"
+      "./utils": "./lib/utils2"
     })
   ]
 });
 ```
+
+## 📄 License
+
+Published under [MIT License](./LICENSE).
+
+<!-- Badges -->
+
+[npm-version-src]: https://img.shields.io/npm/v/esbuild-plugin-import-transform?style=flat&colorA=18181B&colorB=4169E1
+[npm-version-href]: https://npmjs.com/package/esbuild-plugin-import-transform
+[npm-downloads-src]: https://img.shields.io/npm/dm/esbuild-plugin-import-transform?style=flat&colorA=18181B&colorB=4169E1
+[npm-downloads-href]: https://npmjs.com/package/esbuild-plugin-import-transform
