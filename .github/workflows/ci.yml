@@ -1,29 +1,31 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize]
-  workflow_dispatch:
+    types:
+      - opened
+      - synchronize
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        id: pnpm-install
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
+      - name: Setup node
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
-          cache: pnpm
+          node-version: ${{ matrix.node-version}}
 
       - name: Install dependencies
         run: pnpm install
@@ -31,11 +33,11 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Type check
-        run: pnpm typecheck
-
       - name: Lint
         run: pnpm lint
 
       - name: Test
         run: pnpm test
+
+      - name: Typecheck
+        run: pnpm typecheck
