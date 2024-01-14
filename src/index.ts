@@ -30,32 +30,35 @@ function transformer({
   build.onResolve({ filter }, (args) => {
     if (args.resolveDir === "") return;
 
-    return {
-      path: args.path,
-      namespace: "import-transform",
-      pluginData: {
-        resolveDir: args.resolveDir,
-        name: from,
-      },
-    };
+    if (text) {
+      return {
+        path: args.path,
+        namespace: "import-transform",
+        pluginData: {
+          resolveDir: args.resolveDir,
+          name: from,
+        },
+      };
+    }
+
+    return build.resolve(args.path.replace(from, to!), { kind: args.kind, resolveDir: args.resolveDir });
   });
 
   build.onLoad({ filter, namespace: "import-transform" }, (args) => {
-    const code
-      = text
-      || `
-    export * from '${args.path.replace(args.pluginData.name, to!)}';
-    export { default } from '${args.path.replace(args.pluginData.name, to!)}';
-  `;
+    if (!text) {
+      throw new Error("ImportTransformPlugin: `text` is required in onLoad");
+    }
 
     return {
-      contents: code,
+      contents: text,
       resolveDir: args.pluginData.resolveDir,
     };
   });
 }
 
-function ImportTransformPlugin(modules?: Record<string, string | ImportTransform>): Plugin {
+function ImportTransformPlugin(
+  modules?: Record<string, string | ImportTransform>,
+): Plugin {
   return {
     name: "import-transform",
     setup(build) {
