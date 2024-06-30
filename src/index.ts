@@ -1,15 +1,15 @@
 import type { Platform, Plugin, PluginBuild } from "esbuild";
 
 export interface TextTransform {
-  platform?: Platform
-  text: string
-  to?: never
+  platform?: Platform;
+  text: string;
+  to?: never;
 }
 
 export interface ToTransform {
-  platform?: Platform
-  to: string
-  text?: never
+  platform?: Platform;
+  to: string;
+  text?: never;
 }
 
 export type ImportTransform = TextTransform | ToTransform;
@@ -20,10 +20,10 @@ function transformer({
   to,
   text,
 }: {
-  build: PluginBuild
-  from: string
-  to?: string
-  text?: string
+  build: PluginBuild;
+  from: string;
+  to?: string;
+  text?: string;
 }) {
   const filter = new RegExp(`^${from}$`);
 
